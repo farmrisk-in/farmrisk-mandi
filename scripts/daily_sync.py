@@ -133,9 +133,10 @@ def main():
     # SMART FETCH: Figure out what dates we are missing!
     latest_db_date = get_latest_date_in_db()
     
-    # We want to fetch from the day after our latest DB date, up to yesterday.
+    # We want to fetch starting from the latest DB date up to yesterday.
+    # This ensures if the latest date was only partially fetched, it gets updated!
     days_to_fetch = []
-    current = latest_db_date + timedelta(days=1)
+    current = latest_db_date
     while current.date() <= yesterday.date():
         days_to_fetch.append(current)
         current += timedelta(days=1)
