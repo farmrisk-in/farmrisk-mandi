@@ -1,0 +1,29 @@
+name: Daily Mandi Price Sync
+
+on:
+  schedule:
+    # Runs every day at 01:00 UTC (06:30 AM IST) - plenty of time for yesterday's data to settle
+    - cron: '0 1 * * *'
+  workflow_dispatch: # Allows you to manually trigger it from the GitHub Actions tab
+
+jobs:
+  sync_data:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Run Daily Sync Script
+        env:
+          # These secrets must be added in your GitHub Repository Settings -> Secrets and variables -> Actions
+          GOV_API_KEY: ${{ secrets.GOV_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          python scripts/daily_sync.py

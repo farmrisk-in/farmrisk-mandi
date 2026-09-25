@@ -1,0 +1,40 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Inject Public Keys into HTML
+        run: |
+          # Replaces the placeholders in index.html with your actual GitHub Secrets
+          sed -i "s|___SUPABASE_URL___|${{ secrets.SUPABASE_URL }}|g" index.html
+          sed -i "s|___SUPABASE_PUBLISHABLE_KEY___|${{ secrets.SUPABASE_PUBLISHABLE_KEY }}|g" index.html
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+        
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+          
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
