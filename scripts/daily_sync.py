@@ -153,7 +153,8 @@ def main():
         raw_records = fetch_gov_data(date_str_gov)
         if raw_records is None:
             all_uploads_successful = False
-            break # Stop fetching if the Gov API crashes
+            print(f"⏭️ Skipping {date_str_iso} due to fetch errors. Will attempt next dates.")
+            continue # Try the next day instead of halting the entire script
             
         cleaned_records = []
         for r in raw_records:
